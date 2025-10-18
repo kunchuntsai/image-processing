@@ -1,0 +1,54 @@
+# Virtual environment
+venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Test files (in tests directory)
+tests/test_image.png
+tests/test_output.yuv
+tests/test_restored.png
+tests/test_odd.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output files (you may want to keep these)
+*.yuv
+*.nv12
+
+# Old structure (can be removed after migration)
+yuv_converter.py
+yuv_reader.py
+convert.py
+read_yuv.py
+test_converter.py
