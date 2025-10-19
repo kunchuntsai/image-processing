@@ -14,6 +14,9 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # 4. Install dependencies
 pip install -r requirements.txt
+
+# 5. Install package in editable mode (enables CLI tools)
+pip install -e .
 ```
 
 ## Basic Usage
@@ -21,27 +24,28 @@ pip install -r requirements.txt
 ### Convert an Image to YUV NV12
 
 ```bash
-# Make sure venv is activated
+# Make sure venv is activated and package is installed
 source venv/bin/activate
 
 # Convert image
-bin/yuv-convert input.jpg output.yuv
+yuv-convert input.jpg output.yuv
 
 # With verbose output and file info
-bin/yuv-convert input.jpg output.yuv -v --info
+yuv-convert input.jpg output.yuv -v --info
 ```
 
 ### Read a YUV NV12 File
 
 ```bash
 # Read and display YUV file (requires dimensions)
-bin/yuv-read output.yuv 1920 1080
+yuv-read output.yuv 1920 1080
 
 # Save to PNG without displaying
-bin/yuv-read output.yuv 1920 1080 --output restored.png --no-show
+yuv-read output.yuv 1920 1080 --output restored.png --no-show
 
-# Get file information
-bin/yuv-read output.yuv --info
+# Get file information (works with YUV and image files)
+yuv-read output.yuv --info
+yuv-read photo.jpg --info  # Also detects image file formats
 ```
 
 ## Python API
@@ -102,7 +106,7 @@ Use an image editor to resize to even dimensions.
 When reading YUV files, ensure the width and height match the original image dimensions. Use `--info` flag to see suggested dimensions:
 
 ```bash
-bin/yuv-read myfile.yuv --info
+yuv-read myfile.yuv --info
 ```
 
 ## Examples
@@ -118,4 +122,4 @@ python examples/basic_usage.py
 
 - Read the full [README.md](../README.md) for complete documentation
 - Check [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) for technical details
-- Review [REQUIREMENTS.md](REQUIREMENTS.md) for project requirements
+- View test examples in the `tests/` directory

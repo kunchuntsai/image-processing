@@ -12,9 +12,6 @@ import argparse
 import sys
 import os
 
-# Add src directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-
 from yuv_nv12 import read_nv12, visualize_nv12, get_nv12_info
 
 
@@ -85,15 +82,25 @@ Note: Width and height must be even numbers and match the original image dimensi
     if args.info:
         try:
             info = get_nv12_info(args.input)
-            print("YUV NV12 File Information:")
+            print("File Information:")
             print(f"  File: {info['file_path']}")
             print(f"  Format: {info['format']}")
             print(f"  Size: {info['file_size']:,} bytes")
-            print(f"  Total pixels: {info['total_pixels']:,}")
-            if info['suggested_dimensions']:
-                print(f"\n  Suggested dimensions (width x height):")
-                for w, h in info['suggested_dimensions']:
-                    print(f"    {w} x {h}")
+
+            # Handle image files vs YUV files
+            if 'dimensions' in info:
+                # It's an image file
+                print(f"  Dimensions: {info['dimensions']}")
+                print(f"  Total pixels: {info['total_pixels']:,}")
+                if 'note' in info:
+                    print(f"\nNote: {info['note']}")
+            else:
+                # It's a YUV file
+                print(f"  Total pixels: {info['total_pixels']:,}")
+                if info.get('suggested_dimensions'):
+                    print(f"\n  Suggested dimensions (width x height):")
+                    for w, h in info['suggested_dimensions']:
+                        print(f"    {w} x {h}")
             sys.exit(0)
         except Exception as e:
             print(f"Error: {e}", file=sys.stderr)

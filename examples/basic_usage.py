@@ -5,11 +5,7 @@ Basic usage examples for YUV NV12 converter.
 This script demonstrates how to use the yuv_nv12 package in Python code.
 """
 
-import sys
 import os
-
-# Add src directory to path for development
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 from yuv_nv12 import convert_to_nv12, read_nv12, visualize_nv12, DimensionError
 

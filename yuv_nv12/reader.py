@@ -60,6 +60,15 @@ def read_nv12(yuv_path: str, width: int, height: int) -> Image.Image:
     """
     import os
 
+    # Check if file is likely an image format (not YUV)
+    file_ext = os.path.splitext(yuv_path)[1].lower()
+    if file_ext in ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp']:
+        raise ValueError(
+            f"File appears to be an image file ({file_ext}), not a YUV NV12 file. "
+            f"YUV files typically have extensions like .yuv or .nv12. "
+            f"To convert an image to YUV, use 'yuv-convert' instead."
+        )
+
     # Validate dimensions
     if width % 2 != 0 or height % 2 != 0:
         raise ValueError(f"Dimensions must be even numbers. Got {width}x{height}")
@@ -141,10 +150,10 @@ def visualize_nv12(yuv_path: str, width: int, height: int, output_path: str = No
 
 def get_nv12_info(yuv_path: str) -> dict:
     """
-    Get information about a YUV NV12 file.
+    Get information about a file (YUV NV12 or image format).
 
     Args:
-        yuv_path: Path to YUV file
+        yuv_path: Path to file
 
     Returns:
         Dictionary with file information
@@ -152,10 +161,44 @@ def get_nv12_info(yuv_path: str) -> dict:
     import os
 
     if not os.path.exists(yuv_path):
-        raise FileNotFoundError(f"YUV file not found: {yuv_path}")
+        raise FileNotFoundError(f"File not found: {yuv_path}")
 
     file_size = os.path.getsize(yuv_path)
+    file_ext = os.path.splitext(yuv_path)[1].lower()
 
+    # Check if file is an image format
+    image_formats = {
+        '.jpg': 'JPEG Image',
+        '.jpeg': 'JPEG Image',
+        '.png': 'PNG Image',
+        '.bmp': 'BMP Image',
+        '.gif': 'GIF Image',
+        '.tiff': 'TIFF Image',
+        '.webp': 'WebP Image'
+    }
+
+    if file_ext in image_formats:
+        # Try to get image dimensions using PIL
+        try:
+            with Image.open(yuv_path) as img:
+                width, height = img.size
+                return {
+                    'file_path': yuv_path,
+                    'file_size': file_size,
+                    'format': image_formats[file_ext],
+                    'dimensions': f'{width} x {height}',
+                    'total_pixels': width * height,
+                    'note': 'This is an image file, not a YUV NV12 file. Use "yuv-convert" to convert it to YUV format.'
+                }
+        except Exception:
+            return {
+                'file_path': yuv_path,
+                'file_size': file_size,
+                'format': image_formats[file_ext],
+                'note': 'This is an image file, not a YUV NV12 file. Use "yuv-convert" to convert it to YUV format.'
+            }
+
+    # It's a YUV file
     # Calculate total pixels
     # NV12 size = width * height * 1.5
     total_pixels = file_size / 1.5

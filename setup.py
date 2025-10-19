@@ -23,8 +23,7 @@ setup(
     author='Your Name',
     author_email='your.email@example.com',
     url='https://github.com/yourusername/yuv-nv12-converter',
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'),
+    packages=find_packages(exclude=['tests', 'tests.*', 'examples', 'examples.*']),
     python_requires='>=3.7',
     install_requires=[
         'Pillow>=10.0.0',

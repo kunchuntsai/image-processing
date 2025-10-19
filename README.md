@@ -14,27 +14,27 @@ Convert JPG/PNG images to YUV420 NV12 format and read/visualize YUV NV12 files.
 
 ```
 image-processing/
-├── src/
-│   └── yuv_nv12/           # Main package
-│       ├── __init__.py     # Package initialization
-│       ├── converter.py    # Image to YUV converter
-│       └── reader.py       # YUV to image reader
-├── bin/
-│   ├── yuv-convert         # CLI tool for conversion
-│   └── yuv-read            # CLI tool for reading YUV
+├── yuv_nv12/               # Main package
+│   ├── __init__.py         # Package initialization
+│   ├── converter.py        # Image to YUV converter
+│   ├── reader.py           # YUV to image reader
+│   └── cli/                # Command-line interface
+│       ├── __init__.py
+│       ├── convert.py      # yuv-convert CLI tool
+│       └── read.py         # yuv-read CLI tool
 ├── tests/
 │   └── test_converter.py   # Test suite
 ├── examples/
 │   └── basic_usage.py      # Python API examples
 ├── docs/                   # Documentation (future)
 ├── requirements.txt        # Python dependencies
-├── setup.py               # Package setup script
-└── README.md              # This file
+├── setup.py                # Package setup script
+└── README.md               # This file
 ```
 
 ## Installation
 
-### Option 1: Development Setup (Recommended)
+### Development Setup
 
 ```bash
 # Clone or navigate to the project directory
@@ -48,16 +48,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Option 2: Install as Package
-
-```bash
-# Install in editable mode for development
-pip install -e .
-
-# Or install normally
-pip install .
-```
-
 ## Usage
 
 ### Command-Line Interface
@@ -65,27 +55,32 @@ pip install .
 #### Convert Image to YUV NV12
 
 ```bash
-# Using bin scripts (after activating venv)
-bin/yuv-convert input.jpg output.yuv
+# Using installed CLI tools (after pip install)
+yuv-convert input.jpg output.yuv
 
 # With verbose output
-bin/yuv-convert input.png output.nv12 -v
+yuv-convert input.png output.nv12 -v
 
 # Show file information after conversion
-bin/yuv-convert image.jpg output.yuv --info
+yuv-convert image.jpg output.yuv --info
 ```
 
 #### Read and Visualize YUV NV12
 
 ```bash
 # Display YUV file (requires width and height)
-bin/yuv-read video.yuv 1920 1080
+yuv-read video.yuv 1920 1080
 
 # Convert YUV to PNG without displaying
-bin/yuv-read frame.yuv 640 480 --output restored.png --no-show
+yuv-read frame.yuv 640 480 --output restored.png --no-show
 
-# Show file information only
-bin/yuv-read data.nv12 --info
+# Show file information (works with both YUV and image files)
+yuv-read data.nv12 --info
+yuv-read image.jpg --info  # Shows image format and dimensions
+
+# Note: yuv-read only reads YUV files for conversion
+# Image files (.jpg, .png) can only be inspected with --info
+# To convert images to YUV, use yuv-convert
 ```
 
 ### Python Module Usage
@@ -103,13 +98,23 @@ print(f"Converted image: {width}x{height}")
 #### Reading YUV NV12
 
 ```python
-from yuv_nv12 import read_nv12, visualize_nv12
+from yuv_nv12 import read_nv12, visualize_nv12, get_nv12_info
 
 # Read YUV file and get PIL Image
 img = read_nv12('video.yuv', 1920, 1080)
 
 # Visualize and save
 img = visualize_nv12('frame.yuv', 640, 480, output_path='restored.png')
+
+# Get file information (works with YUV and image files)
+info = get_nv12_info('data.yuv')
+print(f"Format: {info['format']}")
+print(f"Total pixels: {info['total_pixels']}")
+
+# Also works with image files
+img_info = get_nv12_info('photo.jpg')
+print(f"Format: {img_info['format']}")  # Shows "JPEG Image"
+print(f"Dimensions: {img_info['dimensions']}")  # e.g., "1920 x 1080"
 ```
 
 #### See More Examples
@@ -170,6 +175,9 @@ Expected output:
 - Input images must have **even width and height** (required by NV12 format)
 - Color conversion uses BT.601 standard (most common for JPG/PNG)
 - Full range YUV (0-255) is used
+- `yuv-read --info` can inspect both YUV files and image files (JPG, PNG, etc.)
+- `yuv-read` can only convert YUV files to images; use `yuv-convert` to convert images to YUV
+- `get_nv12_info()` API function detects and reports the actual file format
 
 ## Examples
 
@@ -180,10 +188,10 @@ Expected output:
 source venv/bin/activate
 
 # 1. Convert image to YUV
-bin/yuv-convert photo.jpg photo.yuv -v
+yuv-convert photo.jpg photo.yuv -v
 
 # 2. Read and verify conversion
-bin/yuv-read photo.yuv 1920 1080 --output verified.png
+yuv-read photo.yuv 1920 1080 --output verified.png
 
 # 3. Compare original and verified images
 ```
@@ -193,7 +201,7 @@ bin/yuv-read photo.yuv 1920 1080 --output verified.png
 The converter validates dimensions and provides helpful error messages:
 
 ```bash
-$ bin/yuv-convert odd_size.jpg output.yuv
+$ yuv-convert odd_size.jpg output.yuv
 ✗ Error: Image dimensions must be even numbers. Got 1921x1080.
 Please resize the image to even dimensions.
 ```
@@ -209,10 +217,10 @@ python tests/test_converter.py
 
 ### Code Structure
 
-- **src/yuv_nv12/converter.py**: Core RGB to YUV NV12 conversion logic
-- **src/yuv_nv12/reader.py**: YUV NV12 to RGB conversion and visualization
-- **bin/yuv-convert**: Command-line tool for image conversion
-- **bin/yuv-read**: Command-line tool for reading YUV files
+- **yuv_nv12/converter.py**: Core RGB to YUV NV12 conversion logic
+- **yuv_nv12/reader.py**: YUV NV12 to RGB conversion and visualization
+- **yuv_nv12/cli/convert.py**: Command-line tool for image conversion
+- **yuv_nv12/cli/read.py**: Command-line tool for reading YUV files
 
 ## Troubleshooting
 
@@ -233,11 +241,3 @@ If conversion fails with dimension errors:
 ## License
 
 MIT License
-
-## Contributing
-
-Contributions are welcome! Please ensure:
-- Code follows existing style
-- Tests pass
-- New features include tests
-- Documentation is updated

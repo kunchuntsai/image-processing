@@ -10,17 +10,20 @@ This project provides a complete solution for converting images to/from YUV420 N
 
 ```
 image-processing/
-├── src/yuv_nv12/          # Core package
-├── bin/                   # Command-line tools
+├── yuv_nv12/              # Core package
+│   ├── cli/               # CLI implementation
+│   ├── converter.py       # Conversion logic
+│   └── reader.py          # Reading logic
 ├── tests/                 # Test suite
 ├── examples/              # Usage examples
 ├── docs/                  # Documentation
-└── requirements.txt       # Dependencies
+├── requirements.txt       # Dependencies
+└── setup.py               # Package installation
 ```
 
 ### Core Components
 
-#### 1. Converter Module (`src/yuv_nv12/converter.py`)
+#### 1. Converter Module (`yuv_nv12/converter.py`)
 
 Handles conversion from RGB images to YUV NV12 format.
 
@@ -38,7 +41,7 @@ Handles conversion from RGB images to YUV NV12 format.
 6. Interleave U and V channels
 7. Write Y plane followed by UV plane to file
 
-#### 2. Reader Module (`src/yuv_nv12/reader.py`)
+#### 2. Reader Module (`yuv_nv12/reader.py`)
 
 Handles reading YUV NV12 files and converting back to RGB.
 
@@ -46,7 +49,7 @@ Handles reading YUV NV12 files and converting back to RGB.
 - `read_nv12(yuv_path, width, height)`: Read and convert YUV to PIL Image
 - `visualize_nv12(yuv_path, width, height, output_path, show)`: Read, save, and display
 - `yuv_to_rgb_bt601(Y, U, V)`: Inverse color space conversion
-- `get_nv12_info(yuv_path)`: Get file information
+- `get_nv12_info(yuv_path)`: Get file information and detect format (YUV/JPEG/PNG)
 
 **Process Flow:**
 1. Validate file size matches expected dimensions
@@ -57,17 +60,21 @@ Handles reading YUV NV12 files and converting back to RGB.
 6. Apply YUV to RGB color space conversion
 7. Create PIL Image from RGB data
 
-#### 3. Command-Line Tools
+#### 3. Command-Line Tools (`yuv_nv12/cli/`)
 
-**bin/yuv-convert:**
+Installed as console scripts via setuptools. After running `pip install -e .`, these commands become available:
+
+**yuv-convert** (`yuv_nv12/cli/convert.py`):
 - User-friendly interface for image conversion
 - Progress indicators and verbose mode
 - Error handling with helpful messages
+- Automatic format detection
 
-**bin/yuv-read:**
+**yuv-read** (`yuv_nv12/cli/read.py`):
 - Read and visualize YUV files
-- File information display
+- File information display (supports YUV and image files)
 - Optional save and display modes
+- Format detection for inspection
 
 ## Technical Details
 
@@ -125,6 +132,7 @@ NV12 format requires even dimensions for proper 4:2:0 subsampling:
 - Input file existence checked before processing
 - File size validated against expected dimensions
 - Supported formats: JPG, JPEG, PNG
+- Automatic format detection for both conversion and inspection
 
 ### Color Range Clipping
 
