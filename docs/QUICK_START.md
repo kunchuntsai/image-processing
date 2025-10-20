@@ -1,5 +1,7 @@
 # Quick Start Guide
 
+**Note:** This project requires Python 3.4+ and uses older versions of dependencies (Pillow 4.x, NumPy 1.11.x) for maximum compatibility with isolated or embedded environments.
+
 ## Installation
 
 ```bash

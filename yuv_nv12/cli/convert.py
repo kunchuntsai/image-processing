@@ -1,10 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Command-line interface for converting images to YUV NV12 format.
 
 Usage:
     yuv-convert input.jpg output.yuv
     yuv-convert input.png output.nv12
+
+Python 3.4+ compatible version (no f-strings)
 """
 
 import argparse
@@ -53,19 +55,20 @@ Note: Input image must have even width and height dimensions.
 
     # Validate input file exists
     if not os.path.exists(args.input):
-        print(f"Error: Input file not found: {args.input}", file=sys.stderr)
+        print("Error: Input file not found: {0}".format(args.input), file=sys.stderr)
         sys.exit(1)
 
     # Check file extension
     input_ext = os.path.splitext(args.input)[1].lower()
     if input_ext not in ['.jpg', '.jpeg', '.png']:
-        print(f"Warning: Input file extension is '{input_ext}'. Supported formats: .jpg, .jpeg, .png")
+        print("Warning: Input file extension is '{0}'. Supported formats: .jpg, .jpeg, .png".format(input_ext))
 
     try:
         if args.verbose:
-            print(f"Converting: {args.input}")
-            print(f"Output: {args.output}")
-            print("Processing...", end='', flush=True)
+            print("Converting: {0}".format(args.input))
+            print("Output: {0}".format(args.output))
+            sys.stdout.write("Processing...")
+            sys.stdout.flush()
 
         # Perform conversion
         width, height = convert_to_nv12(args.input, args.output)
@@ -73,32 +76,32 @@ Note: Input image must have even width and height dimensions.
         if args.verbose:
             print(" Done!")
 
-        print(f"✓ Successfully converted to YUV NV12 format")
-        print(f"  Dimensions: {width}x{height}")
-        print(f"  Output: {args.output}")
+        print("✓ Successfully converted to YUV NV12 format")
+        print("  Dimensions: {0}x{1}".format(width, height))
+        print("  Output: {0}".format(args.output))
 
         if args.info:
             print("\nFile Information:")
             info = get_file_info(args.output)
-            print(f"  Format: {info['format']}")
-            print(f"  File size: {info['file_size']:,} bytes")
-            print(f"  Total pixels: {info['total_pixels']:,}")
+            print("  Format: {0}".format(info['format']))
+            print("  File size: {0:,} bytes".format(info['file_size']))
+            print("  Total pixels: {0:,}".format(info['total_pixels']))
 
     except DimensionError as e:
-        print(f"\n✗ Error: {e}", file=sys.stderr)
+        print("\n✗ Error: {0}".format(e), file=sys.stderr)
         print("\nSuggestion: Resize your image to have even width and height.", file=sys.stderr)
         sys.exit(1)
 
-    except FileNotFoundError as e:
-        print(f"\n✗ Error: {e}", file=sys.stderr)
+    except IOError as e:
+        print("\n✗ Error: {0}".format(e), file=sys.stderr)
         sys.exit(1)
 
     except ValueError as e:
-        print(f"\n✗ Error: {e}", file=sys.stderr)
+        print("\n✗ Error: {0}".format(e), file=sys.stderr)
         sys.exit(1)
 
     except Exception as e:
-        print(f"\n✗ Unexpected error: {e}", file=sys.stderr)
+        print("\n✗ Unexpected error: {0}".format(e), file=sys.stderr)
         if args.verbose:
             import traceback
             traceback.print_exc()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Command-line interface for reading and visualizing YUV NV12 files.
 
@@ -6,6 +6,8 @@ Usage:
     yuv-read input.yuv 1920 1080
     yuv-read input.yuv 1920 1080 --output restored.png
     yuv-read input.yuv 1920 1080 --no-show
+
+Python 3.4+ compatible version (no f-strings)
 """
 
 import argparse
@@ -75,7 +77,7 @@ Note: Width and height must be even numbers and match the original image dimensi
 
     # Validate input file exists
     if not os.path.exists(args.input):
-        print(f"Error: Input file not found: {args.input}", file=sys.stderr)
+        print("Error: Input file not found: {0}".format(args.input), file=sys.stderr)
         sys.exit(1)
 
     # If --info flag, show info and exit
@@ -83,27 +85,27 @@ Note: Width and height must be even numbers and match the original image dimensi
         try:
             info = get_nv12_info(args.input)
             print("File Information:")
-            print(f"  File: {info['file_path']}")
-            print(f"  Format: {info['format']}")
-            print(f"  Size: {info['file_size']:,} bytes")
+            print("  File: {0}".format(info['file_path']))
+            print("  Format: {0}".format(info['format']))
+            print("  Size: {0:,} bytes".format(info['file_size']))
 
             # Handle image files vs YUV files
             if 'dimensions' in info:
                 # It's an image file
-                print(f"  Dimensions: {info['dimensions']}")
-                print(f"  Total pixels: {info['total_pixels']:,}")
+                print("  Dimensions: {0}".format(info['dimensions']))
+                print("  Total pixels: {0:,}".format(info['total_pixels']))
                 if 'note' in info:
-                    print(f"\nNote: {info['note']}")
+                    print("\nNote: {0}".format(info['note']))
             else:
                 # It's a YUV file
-                print(f"  Total pixels: {info['total_pixels']:,}")
+                print("  Total pixels: {0:,}".format(info['total_pixels']))
                 if info.get('suggested_dimensions'):
-                    print(f"\n  Suggested dimensions (width x height):")
+                    print("\n  Suggested dimensions (width x height):")
                     for w, h in info['suggested_dimensions']:
-                        print(f"    {w} x {h}")
+                        print("    {0} x {1}".format(w, h))
             sys.exit(0)
         except Exception as e:
-            print(f"Error: {e}", file=sys.stderr)
+            print("Error: {0}".format(e), file=sys.stderr)
             sys.exit(1)
 
     # Require width and height for conversion
@@ -115,9 +117,10 @@ Note: Width and height must be even numbers and match the original image dimensi
 
     try:
         if args.verbose:
-            print(f"Reading: {args.input}")
-            print(f"Dimensions: {args.width}x{args.height}")
-            print("Processing...", end='', flush=True)
+            print("Reading: {0}".format(args.input))
+            print("Dimensions: {0}x{1}".format(args.width, args.height))
+            sys.stdout.write("Processing...")
+            sys.stdout.flush()
 
         # Read and visualize
         img = visualize_nv12(
@@ -131,26 +134,26 @@ Note: Width and height must be even numbers and match the original image dimensi
         if args.verbose:
             print(" Done!")
 
-        print(f"✓ Successfully read YUV NV12 file")
-        print(f"  Dimensions: {args.width}x{args.height}")
+        print("✓ Successfully read YUV NV12 file")
+        print("  Dimensions: {0}x{1}".format(args.width, args.height))
 
         if args.output:
-            print(f"  Saved to: {args.output}")
+            print("  Saved to: {0}".format(args.output))
 
         if not args.no_show and not args.output:
             print("  (Displaying image...)")
 
     except ValueError as e:
-        print(f"\n✗ Error: {e}", file=sys.stderr)
+        print("\n✗ Error: {0}".format(e), file=sys.stderr)
         print("\nTry using --info to see file information and suggested dimensions.", file=sys.stderr)
         sys.exit(1)
 
-    except FileNotFoundError as e:
-        print(f"\n✗ Error: {e}", file=sys.stderr)
+    except IOError as e:
+        print("\n✗ Error: {0}".format(e), file=sys.stderr)
         sys.exit(1)
 
     except Exception as e:
-        print(f"\n✗ Unexpected error: {e}", file=sys.stderr)
+        print("\n✗ Unexpected error: {0}".format(e), file=sys.stderr)
         if args.verbose:
             import traceback
             traceback.print_exc()

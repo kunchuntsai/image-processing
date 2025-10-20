@@ -140,9 +140,11 @@ Reference: https://docs.kernel.org/userspace-api/media/v4l/pixfmt-yuv-planar.htm
 
 ## Requirements
 
-- Python 3.7+
-- Pillow (PIL) >= 10.0.0
-- NumPy >= 1.24.0
+- Python 3.4+
+- Pillow (PIL) >= 4.0.0, < 5.0.0
+- NumPy >= 1.11.0, < 1.12.0
+
+**Note:** This project has been optimized for Python 3.4 compatibility for use in isolated or embedded environments. The older dependency versions are intentionally specified for maximum compatibility.
 
 ## Testing
 

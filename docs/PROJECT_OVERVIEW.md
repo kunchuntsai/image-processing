@@ -4,6 +4,8 @@
 
 This project provides a complete solution for converting images to/from YUV420 NV12 format, a widely used video format in multimedia applications.
 
+**Python 3.4+ Compatible:** This project has been written to be compatible with Python 3.4 and later versions, making it suitable for use in isolated desktop environments, embedded systems, or legacy platforms.
+
 ## Architecture
 
 ### Directory Structure

@@ -2,14 +2,15 @@
 YUV NV12 Reader and Visualizer Module
 
 Reads YUV420 NV12 binary files and converts them back to displayable images.
+
+Python 3.4+ compatible version (no type hints, no f-strings)
 """
 
 import numpy as np
 from PIL import Image
-from typing import Tuple
 
 
-def yuv_to_rgb_bt601(Y: np.ndarray, U: np.ndarray, V: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def yuv_to_rgb_bt601(Y, U, V):
     """
     Convert YUV to RGB using BT.601 standard (inverse of conversion).
     Uses full range (0-255).
@@ -38,7 +39,7 @@ def yuv_to_rgb_bt601(Y: np.ndarray, U: np.ndarray, V: np.ndarray) -> Tuple[np.nd
     return R, G, B
 
 
-def read_nv12(yuv_path: str, width: int, height: int) -> Image.Image:
+def read_nv12(yuv_path, width, height):
     """
     Read a YUV420 NV12 binary file and convert to RGB image.
 
@@ -56,7 +57,7 @@ def read_nv12(yuv_path: str, width: int, height: int) -> Image.Image:
 
     Raises:
         ValueError: If dimensions are invalid or file size doesn't match
-        FileNotFoundError: If YUV file doesn't exist
+        IOError: If YUV file doesn't exist
     """
     import os
 
@@ -64,27 +65,29 @@ def read_nv12(yuv_path: str, width: int, height: int) -> Image.Image:
     file_ext = os.path.splitext(yuv_path)[1].lower()
     if file_ext in ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp']:
         raise ValueError(
-            f"File appears to be an image file ({file_ext}), not a YUV NV12 file. "
-            f"YUV files typically have extensions like .yuv or .nv12. "
-            f"To convert an image to YUV, use 'yuv-convert' instead."
+            "File appears to be an image file ({0}), not a YUV NV12 file. "
+            "YUV files typically have extensions like .yuv or .nv12. "
+            "To convert an image to YUV, use 'yuv-convert' instead.".format(file_ext)
         )
 
     # Validate dimensions
     if width % 2 != 0 or height % 2 != 0:
-        raise ValueError(f"Dimensions must be even numbers. Got {width}x{height}")
+        raise ValueError("Dimensions must be even numbers. Got {0}x{1}".format(width, height))
 
     # Calculate expected file size
     expected_size = int(width * height * 1.5)  # Y + UV/2
 
     # Check file exists and size
     if not os.path.exists(yuv_path):
-        raise FileNotFoundError(f"YUV file not found: {yuv_path}")
+        raise IOError("YUV file not found: {0}".format(yuv_path))
 
     file_size = os.path.getsize(yuv_path)
     if file_size != expected_size:
         raise ValueError(
-            f"File size mismatch. Expected {expected_size} bytes for {width}x{height}, "
-            f"but got {file_size} bytes. Please verify the dimensions are correct."
+            "File size mismatch. Expected {0} bytes for {1}x{2}, "
+            "but got {3} bytes. Please verify the dimensions are correct.".format(
+                expected_size, width, height, file_size
+            )
         )
 
     # Read binary file
@@ -118,7 +121,7 @@ def read_nv12(yuv_path: str, width: int, height: int) -> Image.Image:
     return img
 
 
-def visualize_nv12(yuv_path: str, width: int, height: int, output_path: str = None, show: bool = True) -> Image.Image:
+def visualize_nv12(yuv_path, width, height, output_path=None, show=True):
     """
     Visualize a YUV NV12 file by converting to RGB and optionally saving/displaying.
 
@@ -136,19 +139,19 @@ def visualize_nv12(yuv_path: str, width: int, height: int, output_path: str = No
 
     if output_path:
         img.save(output_path)
-        print(f"Saved RGB image to: {output_path}")
+        print("Saved RGB image to: {0}".format(output_path))
 
     if show:
         try:
             img.show()
         except Exception as e:
-            print(f"Could not display image: {e}")
+            print("Could not display image: {0}".format(e))
             print("Image data is still available but display failed.")
 
     return img
 
 
-def get_nv12_info(yuv_path: str) -> dict:
+def get_nv12_info(yuv_path):
     """
     Get information about a file (YUV NV12 or image format).
 
@@ -161,7 +164,7 @@ def get_nv12_info(yuv_path: str) -> dict:
     import os
 
     if not os.path.exists(yuv_path):
-        raise FileNotFoundError(f"File not found: {yuv_path}")
+        raise IOError("File not found: {0}".format(yuv_path))
 
     file_size = os.path.getsize(yuv_path)
     file_ext = os.path.splitext(yuv_path)[1].lower()
@@ -186,7 +189,7 @@ def get_nv12_info(yuv_path: str) -> dict:
                     'file_path': yuv_path,
                     'file_size': file_size,
                     'format': image_formats[file_ext],
-                    'dimensions': f'{width} x {height}',
+                    'dimensions': '{0} x {1}'.format(width, height),
                     'total_pixels': width * height,
                     'note': 'This is an image file, not a YUV NV12 file. Use "yuv-convert" to convert it to YUV format.'
                 }

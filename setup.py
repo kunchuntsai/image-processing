@@ -24,10 +24,10 @@ setup(
     author_email='your.email@example.com',
     url='https://github.com/yourusername/yuv-nv12-converter',
     packages=find_packages(exclude=['tests', 'tests.*', 'examples', 'examples.*']),
-    python_requires='>=3.7',
+    python_requires='>=3.4',
     install_requires=[
-        'Pillow>=10.0.0',
-        'numpy>=1.24.0',
+        'Pillow>=4.0.0,<5.0.0',
+        'numpy>=1.11.0,<1.12.0',
     ],
     entry_points={
         'console_scripts': [
@@ -40,11 +40,9 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Multimedia :: Graphics :: Graphics Conversion',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: MIT License',
     ],
     keywords='yuv nv12 image converter video',

@@ -3,11 +3,12 @@ YUV NV12 Image Converter Module
 
 Converts JPG/PNG images to YUV420 NV12 format.
 Reference: https://docs.kernel.org/userspace-api/media/v4l/pixfmt-yuv-planar.html
+
+Python 3.4+ compatible version (no type hints, no f-strings)
 """
 
 from PIL import Image
 import numpy as np
-from typing import Tuple
 
 
 class DimensionError(Exception):
@@ -15,7 +16,7 @@ class DimensionError(Exception):
     pass
 
 
-def validate_dimensions(width: int, height: int) -> None:
+def validate_dimensions(width, height):
     """
     Validate that image dimensions are even numbers (required for NV12).
 
@@ -28,12 +29,12 @@ def validate_dimensions(width: int, height: int) -> None:
     """
     if width % 2 != 0 or height % 2 != 0:
         raise DimensionError(
-            f"Image dimensions must be even numbers. Got {width}x{height}. "
-            f"Please resize the image to even dimensions."
+            "Image dimensions must be even numbers. Got {0}x{1}. "
+            "Please resize the image to even dimensions.".format(width, height)
         )
 
 
-def rgb_to_yuv_bt601(r: np.ndarray, g: np.ndarray, b: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def rgb_to_yuv_bt601(r, g, b):
     """
     Convert RGB to YUV using BT.601 standard (most common for JPG/PNG).
     Uses full range (0-255).
@@ -57,7 +58,7 @@ def rgb_to_yuv_bt601(r: np.ndarray, g: np.ndarray, b: np.ndarray) -> Tuple[np.nd
     return Y, U, V
 
 
-def convert_to_nv12(image_path: str, output_path: str) -> Tuple[int, int]:
+def convert_to_nv12(image_path, output_path):
     """
     Convert an image (JPG/PNG) to YUV420 NV12 format.
 
@@ -74,16 +75,16 @@ def convert_to_nv12(image_path: str, output_path: str) -> Tuple[int, int]:
 
     Raises:
         DimensionError: If image dimensions are not even
-        FileNotFoundError: If input image doesn't exist
+        IOError: If input image doesn't exist
         ValueError: If image format is not supported
     """
     # Load image
     try:
         img = Image.open(image_path)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Input image not found: {image_path}")
+    except IOError:
+        raise IOError("Input image not found: {0}".format(image_path))
     except Exception as e:
-        raise ValueError(f"Failed to load image: {e}")
+        raise ValueError("Failed to load image: {0}".format(e))
 
     # Convert to RGB if needed
     if img.mode != 'RGB':
@@ -123,7 +124,7 @@ def convert_to_nv12(image_path: str, output_path: str) -> Tuple[int, int]:
     return width, height
 
 
-def get_file_info(yuv_path: str) -> dict:
+def get_file_info(yuv_path):
     """
     Get information about a YUV NV12 file.
 

@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Test script for YUV NV12 converter and reader.
 Creates a test image, converts it to YUV, and reads it back.
+
+Python 3.4+ compatible version (no f-strings)
 """
 
 from PIL import Image, ImageDraw
@@ -11,7 +13,7 @@ import sys
 
 def create_test_image(width=640, height=480, filename='test_image.png'):
     """Create a simple test image with colored stripes."""
-    print(f"Creating test image: {width}x{height}")
+    print("Creating test image: {0}x{1}".format(width, height))
 
     img = Image.new('RGB', (width, height))
     draw = ImageDraw.Draw(img)
@@ -34,7 +36,7 @@ def create_test_image(width=640, height=480, filename='test_image.png'):
     draw.text((20, 20), "YUV NV12 Test", fill=(255, 255, 255))
 
     img.save(filename)
-    print(f"✓ Test image saved: {filename}")
+    print("✓ Test image saved: {0}".format(filename))
     return filename
 
 
@@ -47,7 +49,7 @@ def test_conversion():
         from yuv_nv12 import convert_to_nv12, read_nv12
         print("✓ Modules imported successfully")
     except ImportError as e:
-        print(f"✗ Failed to import modules: {e}")
+        print("✗ Failed to import modules: {0}".format(e))
         return False
 
     # Create test image
@@ -57,14 +59,14 @@ def test_conversion():
 
     try:
         # Test conversion to YUV
-        print(f"\nConverting to YUV NV12...")
+        print("\nConverting to YUV NV12...")
         width, height = convert_to_nv12(test_img, yuv_file)
-        print(f"✓ Converted successfully: {width}x{height}")
+        print("✓ Converted successfully: {0}x{1}".format(width, height))
 
         # Check file size
         expected_size = int(width * height * 1.5)
         actual_size = os.path.getsize(yuv_file)
-        print(f"  File size: {actual_size} bytes (expected: {expected_size})")
+        print("  File size: {0} bytes (expected: {1})".format(actual_size, expected_size))
 
         if actual_size == expected_size:
             print("✓ File size matches expected")
@@ -73,25 +75,25 @@ def test_conversion():
             return False
 
         # Test reading YUV
-        print(f"\nReading YUV NV12 file...")
+        print("\nReading YUV NV12 file...")
         img = read_nv12(yuv_file, width, height)
-        print(f"✓ Read successfully: {img.size}")
+        print("✓ Read successfully: {0}".format(img.size))
 
         # Save restored image
         img.save(restored_file)
-        print(f"✓ Restored image saved: {restored_file}")
+        print("✓ Restored image saved: {0}".format(restored_file))
 
         print("\n=== Test Summary ===")
-        print(f"Original image: {test_img}")
-        print(f"YUV file: {yuv_file}")
-        print(f"Restored image: {restored_file}")
+        print("Original image: {0}".format(test_img))
+        print("YUV file: {0}".format(yuv_file))
+        print("Restored image: {0}".format(restored_file))
         print("\nYou can compare the original and restored images to verify quality.")
         print("Note: Some minor color differences may occur due to YUV conversion.")
 
         return True
 
     except Exception as e:
-        print(f"\n✗ Test failed: {e}")
+        print("\n✗ Test failed: {0}".format(e))
         import traceback
         traceback.print_exc()
         return False
@@ -113,12 +115,12 @@ def test_odd_dimensions():
             print("✗ Should have raised DimensionError!")
             return False
         except DimensionError as e:
-            print(f"✓ Correctly rejected odd dimensions: {e}")
+            print("✓ Correctly rejected odd dimensions: {0}".format(e))
             os.remove('test_odd.png')
             return True
 
     except Exception as e:
-        print(f"✗ Unexpected error: {e}")
+        print("✗ Unexpected error: {0}".format(e))
         return False
 
 
